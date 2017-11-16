@@ -122,12 +122,13 @@ class Expression:
                 if not self.items[ni-1] == "(":
                     new.append("*")
                 new.append(i)
-            elif i == ")" and nextIndexExists(self.items,ni) and self.items[ni+1] not in Expression.operations:
+            elif i == ")":
                 if self.items[ni-1] == "(":
                     new.append(1)
                 new.append(i) 
-                if not self.items[ni+1] == ")":
-                    new.append("*") 
+                if nextIndexExists(self.items,ni) and self.items[ni+1] not in Expression.operations:
+                    if not self.items[ni+1] == ")":
+                        new.append("*") 
             else:
                 new.append(i)
         self.items = new
@@ -248,6 +249,7 @@ class Expression:
                             self.replaceWithValue(new,ni-1,ni+1,exp[ni-1]+exp[ni+1])
                         elif op == "-":
                             self.replaceWithValue(new,ni-1,ni+1,exp[ni-1]-exp[ni+1])
+        
         #systemic operations for continuous integration to the solution cloud                
                         exp = []
                         for i in new:
