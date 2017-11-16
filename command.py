@@ -259,7 +259,7 @@ class Expression:
                 if didOp:
                     didOp = False
                     break
-        print(exp)
+        #print(exp)
         return exp
 
 
@@ -282,7 +282,7 @@ class Expression:
             print(exp)
             """
             self.replaceWithValue(exp,paren[0],paren[1],self.evaluateParen(exp[paren[0]+1:paren[1]])[0])
-            print("AFTER CALL",exp)
+            #print("AFTER CALL",exp)
         return self.evaluate(exp)
 
     def simplify(self):
