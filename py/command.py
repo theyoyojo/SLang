@@ -7,10 +7,19 @@ class CommandData:
         self.options = options 
         self.prompt = prompt
         self.help = manual
+        self.vars = []
 
     def execute(self,option,*params):
         sys.stdout.write(">>")
         self.options[option](*params)
+
+    def var(self, option):
+        if option == "new":
+            None
+
+    def output(self,*args):
+        print(*args)
+
 
     def getParams(self,option):
        return signature(self.options[option]).parameters
@@ -104,7 +113,10 @@ class Expression:
                     "-":OP_BINARY
                  }
 
-    opOrder = ["^","!","*","/","+","-"]
+    opOrder = [ ["^"],
+                ["!"],
+                ["*","/"],
+                ["+","-"]]
 
     def __init__(self, items):
        self.items = items 
@@ -229,6 +241,7 @@ class Expression:
         
     def evaluate(self,exp):
         didOp = False
+        counter = 0
         while(len(exp) > 1):
             for op in Expression.opOrder:
                 for ni in range(len(exp)):
@@ -236,21 +249,22 @@ class Expression:
                     for item in exp:
                         new.append(item)
                     i = exp[ni]
-                    if i == op:
-                        if op == "^":
+                    #print(op)
+                    if i in op:
+                        if i == "^":
                             self.replaceWithValue(new,ni-1,ni+1,exp[ni-1]**exp[ni+1])
-                        elif op == "!":
+                        elif i  == "!":
                             self.replaceWithValue(new,ni-1,ni+1,self.factorial(int(exp[ni-1])))
-                        elif op == "*":
+                        elif i == "*":
                             self.replaceWithValue(new,ni-1,ni+1,exp[ni-1]*exp[ni+1])
-                        elif op == "/":
+                        elif i == "/":
                             self.replaceWithValue(new,ni-1,ni+1,exp[ni-1]/exp[ni+1])
-                        elif op == "+":
+                        elif i == "+":
                             self.replaceWithValue(new,ni-1,ni+1,exp[ni-1]+exp[ni+1])
-                        elif op == "-":
+                        elif i == "-":
                             self.replaceWithValue(new,ni-1,ni+1,exp[ni-1]-exp[ni+1])
         
-        #systemic operations for continuous integration to the solution cloud                
+                        #systemic operations for continuous integration to the solution cloud                
                         exp = []
                         for i in new:
                            exp.append(i) 
@@ -258,6 +272,8 @@ class Expression:
                         break
                 if didOp:
                     didOp = False
+                    #print("eval count#",counter,exp)
+                    counter += 1
                     break
         #print(exp)
         return exp
@@ -283,6 +299,7 @@ class Expression:
             """
             self.replaceWithValue(exp,paren[0],paren[1],self.evaluateParen(exp[paren[0]+1:paren[1]])[0])
             #print("AFTER CALL",exp)
+            print(self.evaluate(exp))
         return self.evaluate(exp)
 
     def simplify(self):
@@ -478,13 +495,13 @@ def fixTypes(commands, types):
             
 
 def show(string):
-    print(string)
+    data.output(string)
 
 def length(string):
-    print(len(string))
+    data.output(len(string))
 
 def add(a:int ,b:int):
-    print (str(a) + " + " + str(b) + " = " + str(a+b))
+    data.output(str(a) + " + " + str(b) + " = " + str(a+b))
 
 def execute(arg):
     print("executing " + arg + ".") 
