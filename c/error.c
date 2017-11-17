@@ -8,11 +8,11 @@ void throwException(int error)
 		case TOO_MANY_ARGS:
 			printf("[ERROR] Too many args.\n");
 			break;
-		case ADDLINE_FAIL:
-			printf("[ERROR] Could not add new line to program because realloc() failed.\n");
+		case REALLOC_FAIL:
+			printf("[ERROR] Unable to reallocate memory. Check your available RAM.\n");
 			break;
 		default:
-			printf("An unknown error occured.\n");
+			printf("[ERROR] An unknown error occured.\n");
 			break;
 	}
 }

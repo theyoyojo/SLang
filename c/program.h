@@ -14,7 +14,7 @@ Program newProgram(void);
 
 void addLine(Program *prog);
 
-void appendLine(Program *prog, String newLine);
+void appendLine(Program *prog, StringString newLine);
 
 void printProg(Program prog);
 

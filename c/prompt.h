@@ -2,6 +2,7 @@
 #define PROMPT_H "prompt.h"
 #include "program.h"
 
-void prompt(Program program);
+void prompt(Program *program);
+
 
 #endif
