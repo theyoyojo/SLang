@@ -20,6 +20,7 @@ typedef struct String {
 typedef struct StringString {
 	String* strings;
 	int length;
+  int capacity;
 } StringString;
 
 String newString(int size);
@@ -36,7 +37,7 @@ void printSS(StringString ss);
 
 StringString stringCharsToStringString(String str);
 
-void * safeRealloc(void *ptr, int newSize);
+void * safeRealloc(void *ptr, unsigned long int newSize);
 
 int getRawLine(FILE *in, char** buff, int buffSize);
 

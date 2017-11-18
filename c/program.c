@@ -1,10 +1,90 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "program.h"
+#include "utility.h"
 
-#define APPENDLINE_DB true
+#define APPENDLINE_DB false
 #define ADDLINE_DB false
-#define PRINTPROG_DB true 
+#define PRINTPROG_DB false
+#define KILL_DB false
+
+
+Program newProgram(void)
+{
+  Program new;
+
+  new.lines = NULL;
+  new.length = 0;
+  new.capacity = 0;
+
+  return new;
+}
+
+void killProgram(Program *prog)
+{
+  int i;
+  KILL_DB ? printf("killing program\n") : 0;
+  if(prog->lines != NULL)
+  {
+    for(i = 0; i < prog->length; i++)
+    {
+      killSS(&prog->lines[i]);
+    }
+    free(prog->lines); prog->lines = NULL;
+  }
+  prog->length = 0;
+
+  //program is kill
+
+  KILL_DB ? printf("program is kill\n") : 0;
+}
+
+
+void addLine(Program *prog)
+{
+  prog->length++;
+  ADDLINE_DB ? printf("adding line: new length of prog is:%d\n",prog->length) : 0;
+
+  if(prog->lines == NULL)
+  {
+    prog->lines = (StringString*)malloc(sizeof(StringString) * prog->length);
+  }
+  else
+  {
+    prog->lines = (StringString*)safeRealloc(prog->lines,sizeof(StringString) * prog->length);
+  }
+}
+
+void appendLine(Program *prog, StringString *line)
+{
+  addLine(prog);
+
+  prog->lines[prog->length-1] = *line;
+  
+  if(APPENDLINE_DB)
+  {
+    printf("appending line from %p. line follows:\n",line);
+    printSS(*line);
+    printf("END OF LINE\n");
+  }
+
+  //killSS(&line);
+}
+
+void printProgram(Program prog)
+{
+  int i;
+
+  PRINTPROG_DB ? printf("printing program of length %d.\n",prog.length) : 0;
+  for(i = 0; i < prog.length; i++)
+  {
+    printSS(prog.lines[i]);
+  }
+}
+
+
+/* the old way of doing thngs is below. This involves dynamically allocating and reallocating a char*** for some reason,
+ * getting rid of StringStrings, and keeping track of lengths seperately. As you can expect, it caused many an unforseen segfault.
 
 Program newProgram(void)
 {
@@ -135,3 +215,5 @@ void printProgram(Program prog) { int i,j,k;
 	}
 	printf("\n");
 }
+
+*/
