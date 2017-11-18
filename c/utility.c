@@ -23,6 +23,7 @@ void killString(String *toKill)
 {
   free(toKill->chars);
   toKill->chars = NULL;
+  toKill->length = 0;
 }
 
 StringString newStringString(int nStrings, String *strings)
@@ -30,7 +31,8 @@ StringString newStringString(int nStrings, String *strings)
 	StringString new;
 	int i;
 
-	new.strings = (String*)malloc(sizeof(String) * nStrings);
+  new.capacity = (int)(1.33333*(double)nStrings);
+	new.strings = (String*)malloc(sizeof(String) * new.capacity);
 	new.length = nStrings;
 
 	for(i = 0; i < nStrings; i++)
@@ -52,6 +54,8 @@ void killSS(StringString *murderMe)
     }
     free(murderMe->strings); murderMe->strings = NULL;
   }
+  murderMe->length = 0;
+ 
 }
 
 String promptForString(int max)
@@ -134,7 +138,7 @@ StringString stringCharsToStringString(String str)
   return new;
 }
 	
-void * safeRealloc(void *ptr, int newSize)
+void * safeRealloc(void *ptr, unsigned long int newSize)
 {
 	void *test;
 

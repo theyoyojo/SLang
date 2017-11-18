@@ -105,8 +105,11 @@ int main(int argc, char* argv[])
     printf("\n");
     */
 
+    MAIN_DB ? printf("about to call printProg(prog)\n") : 0;
     printProgram(prog); 
+    MAIN_DB ? printf("returned from printProgram(), now calling killProgram(&prog)\n") : 0;
     killProgram(&prog);
+    MAIN_DB ? printf("returned from killProgram. %p should be null.\n", prog.lines) : 0; 
 	}
 
 	MAIN_DB ? printf("returning 0 after this message.\n") : 0;	
