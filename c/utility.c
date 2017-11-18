@@ -6,6 +6,7 @@
 #define SAFEREALLOC_DB false
 #define PROMPTFORSTRING_DB false
 #define GETRAWLINE_DB false
+#define PRINTSS_DB false
 
 String newString(int size)
 {
@@ -13,9 +14,15 @@ String newString(int size)
 
   new.capacity = (int)((1.3333)*(double)(size+1));
 	new.chars = (char*)malloc(sizeof(char) * new.capacity);
-	new.length = size+1;
-
+	new.length = size;
+	
 	return new;
+}
+
+void killString(String *toKill)
+{
+  free(toKill->chars);
+  toKill->chars = NULL;
 }
 
 StringString newStringString(int nStrings, String *strings)
@@ -32,6 +39,19 @@ StringString newStringString(int nStrings, String *strings)
 	}
 
 	return new;
+}
+
+void killSS(StringString *murderMe)
+{
+  int i;
+  if(murderMe->strings != NULL)
+  {
+    for(i = 0; i < murderMe->length; i++)
+    {
+      killString(&murderMe->strings[i]);
+    }
+    free(murderMe->strings); murderMe->strings = NULL;
+  }
 }
 
 String promptForString(int max)
@@ -90,7 +110,7 @@ void printSS(StringString ss)
 
   for(i = 0; i < ss.length; i++)
   {
-    printf("[%s]%c",ss.strings[i].chars,i < ss.length-1 ? ',' : '\n');
+    printf("%c%s%c%c",PRINTSS_DB? '[' : 0,ss.strings[i].chars,PRINTSS_DB? ']' : 0,PRINTSS_DB ? (i < ss.length-1 ? ',' : '\n') : 0);
   }
 }
 
@@ -99,6 +119,8 @@ StringString stringCharsToStringString(String str)
   int i;
   StringString new;
   String *singleCharStrings; 
+  
+  singleCharStrings = (String*)malloc(sizeof(String)*str.length);
 
   for(i = 0; i < str.length; i++)
   {
@@ -135,7 +157,7 @@ int getRawLine(FILE *in, char** buff, int buffSize)
 
   buffLength = 0;
   *buff = (char*)malloc(sizeof(char) * buffSize);
-  memset(*buff,0,sizeof(char) * buffSize);
+  //memset(*buff,0,sizeof(char) * buffSize);
 
   for(i = 0; i < buffSize-1; i++)
   {
@@ -146,10 +168,11 @@ int getRawLine(FILE *in, char** buff, int buffSize)
 
     if(gotChar == false || ch == '\n')
     {
+      //ungetc(ch,in);
       break;
     }
   }
-  buff[++buffLength] = '\0';
+  (*buff)[buffLength++] = '\0';
   
   /* test print buff
   for(i = 0; i < buffLength; i++)

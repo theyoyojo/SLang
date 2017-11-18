@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include "program.h"
 
-#define APPENDLINE_DB 0
-#define ADDLINE_DB 0
-#define PRINTPROG_DB 0
+#define APPENDLINE_DB true
+#define ADDLINE_DB false
+#define PRINTPROG_DB true 
 
 Program newProgram(void)
 {
@@ -17,11 +17,40 @@ Program newProgram(void)
 	return prog;
 }
 
+void killProgram(Program *prog)
+{
+  //i = the line in the file
+  //j = the symbol (char array) in line i
+  //k = the char in symbol j on line i
+  int i,j,k;
+
+  if(prog->file != NULL)
+  {
+    for(i = 0; i < prog->lines; i++)
+    {
+      if(prog->file[i] != NULL)
+      {
+        for(j = 0; j < prog->lenLines[i]; j++)
+        {
+          if(prog->file[i][j] != NULL)
+          {
+            free(prog->file[i][j]); prog->file[i][j] = NULL;
+          }
+        }
+      free(prog->lenLineSymbols[i]); prog->lenLineSymbols[i] = NULL;
+      free(prog->file[i]); prog->file[i] = NULL;
+      }
+    }
+    free(prog->lenLineSymbols); prog->lenLineSymbols = NULL;
+    free(prog->lenLines); prog->lenLines = NULL;
+    free(prog->file); prog->file = NULL;
+    //program is kill     
+  }
+}
+
 
 void addLine(Program *prog)
 {
-	char ***ptrFileTest;
-
 	prog->lines++;
 
 	if(prog->file == NULL)
@@ -86,7 +115,7 @@ void appendLine(Program *prog, StringString newLine)
 	}
 }
 
-void printProg(Program prog) { int i,j,k;
+void printProgram(Program prog) { int i,j,k;
 
 	PRINTPROG_DB ? printf("BEGIN PRINT PROG ()\n") : 0;
 

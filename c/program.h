@@ -3,6 +3,7 @@
 #include "error.h"
 #include "utility.h"
 
+
 typedef struct Program{
 	char ***file;
 	int lines;
@@ -12,10 +13,12 @@ typedef struct Program{
 
 Program newProgram(void);
 
+void killProgram(Program *prog);
+
 void addLine(Program *prog);
 
 void appendLine(Program *prog, StringString newLine);
 
-void printProg(Program prog);
+void printProgram(Program prog);
 
 #endif

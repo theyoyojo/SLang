@@ -9,6 +9,8 @@
 #define USE_PROMPT 0
 #define USE_FILE 1
 
+#define MAIN_DB false
+
 bool validateArgc(int argc);
 
 void showHelp(void);
@@ -18,8 +20,6 @@ void * handleFlags(int argc, char* argv[]);
 int main(int argc, char* argv[])
 {
 	void *flagActions;
-	char ***program;	
-	int progLines;
 	int interpreterMode;	
 
 	if(!validateArgc(argc))
@@ -37,6 +37,7 @@ int main(int argc, char* argv[])
 	{
 		Program prog = newProgram();
     prompt(&prog);
+    MAIN_DB ? printf("MADE IT BACK TO MAIN ALIVE\n") : 0;
 		/*
 		String test1 = promptForString(20);
 		String test2 = promptForString(21);
@@ -104,9 +105,11 @@ int main(int argc, char* argv[])
     printf("\n");
     */
 
-
+    printProgram(prog); 
+    killProgram(&prog);
 	}
-		
+
+	MAIN_DB ? printf("returning 0 after this message.\n") : 0;	
 	return 0;
 }
 
@@ -137,16 +140,21 @@ void showHelp(void)
 
 void * handleFlags(int argc, char* argv[])
 {
-	if(argc > 1)
+  int i;
+  for(i = 1; i < argc; i++)
 	{
-		if(strcmp(argv[1],"-h") == 0 || strcmp(argv[1],"--help") == 0)
-		{
-			showHelp();
-		}
-		else
-		{
-			printf("Unknown flag \"%s\".\n",argv[1]);
-		} 
+    if(*argv[i] == '-')
+    {
+      if(strcmp(argv[1],"-h") == 0 || strcmp(argv[1],"--help") == 0)
+      {
+        showHelp();
+        exit(0);
+      }
+      else
+      {
+        printf("Unknown flag \"%s\".\n",argv[1]);
+      } 
+    }
 	}
 
 	return NULL;
