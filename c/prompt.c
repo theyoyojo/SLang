@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #define PROMPT "SLang>>"
-#define PROMPT_DB false
+#define PROMPT_DB true
 
 //TODO allow user to adjust buffer with args
 #define DEFAULT_BUFFER_SIZE 1000
@@ -29,8 +29,10 @@ void systemGenericPrompt(Program *prog)
     printf(PROMPT);
     buffLength = getRawLine(stdin,&buff,DEFAULT_BUFFER_SIZE);
     
-    //create a new string struct the size of the input buffer (though the allocated memory [raw.capacity] is secrretly ~1.3x this amount)
+    //create a new string struct the size of the input buffer (though the allocated memory [raw.capacity] is secretly ~1.3x this amount)
+    printf("I m about to make that new string brother and sister it iwll be %d chars long\n",buffLength);
     raw = newString(buffLength);
+    printf("IM IN THA PROMPT JUT AFTER making nu strin n shiet\n");
     PROMPT_DB ? printf("buffLength=%d, begins @%p\n",buffLength,buff) : 0;
 
     //copy the contents of the buffer to the new string

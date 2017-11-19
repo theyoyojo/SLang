@@ -25,6 +25,10 @@ typedef struct StringString {
 
 String newString(int size);
 
+void printString(String string);
+
+String constToString(const char* literal);
+
 void killString(String *toKill);
 
 StringString newStringString(int nStrings, String *strings);
@@ -40,5 +44,6 @@ StringString stringCharsToStringString(String str);
 void * safeRealloc(void *ptr, unsigned long int newSize);
 
 int getRawLine(FILE *in, char** buff, int buffSize);
+
 
 #endif

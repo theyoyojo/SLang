@@ -9,9 +9,11 @@
 #define KILL_DB false
 
 
-Program newProgram(void)
+Program newProgram(String name)
 {
   Program new;
+
+  new.name = name;
 
   new.lines = NULL;
   new.length = 0;

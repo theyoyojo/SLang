@@ -12,10 +12,11 @@ String newString(int size)
 {
 	String new;
 
+
   new.capacity = (int)((1.3333)*(double)(size+1));
 	new.chars = (char*)malloc(sizeof(char) * new.capacity);
 	new.length = size;
-	
+
 	return new;
 }
 
@@ -24,6 +25,11 @@ void killString(String *toKill)
   free(toKill->chars);
   toKill->chars = NULL;
   toKill->length = 0;
+}
+
+void printString(String string)
+{
+  printf("%s\n",string.chars);
 }
 
 StringString newStringString(int nStrings, String *strings)
@@ -42,6 +48,22 @@ StringString newStringString(int nStrings, String *strings)
 
 	return new;
 }
+
+String constToString(const char* literal)
+{
+  String new;
+  int lenCount,i;
+
+  lenCount = 0;
+  while(literal[lenCount] != '\0') lenCount++;
+  lenCount++;
+
+  new = newString(lenCount);
+  for(i = 0; i < lenCount; i++) new.chars[i] = literal[i];
+
+  return new;
+}
+  
 
 void killSS(StringString *murderMe)
 {

@@ -16,11 +16,13 @@ typedef struct Program{
 typedef struct Program
 {
   StringString *lines;
+  String name;
   int length;
   int capacity;
+
 } Program;
 
-Program newProgram(void);
+Program newProgram(String name);
 
 void killProgram(Program *prog);
 

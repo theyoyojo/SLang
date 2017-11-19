@@ -1,116 +1,54 @@
-#include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "error.h"
 #include "utility.h"
 #include "program.h"
 #include "prompt.h"
+#include "interpret.h"
 
-#define USE_PROMPT 0
-#define USE_FILE 1
-
-#define MAIN_DB false
+#define MAIN_DB true
+#define HANDLEARGS_DB false
 
 bool validateArgc(int argc);
 
 void showHelp(void);
 
-void * handleFlags(int argc, char* argv[]);
+void  handleArgs(int argc, char* argv[]);
+
+Session current;
 
 int main(int argc, char* argv[])
 {
-	void *flagActions;
-	int interpreterMode;	
-
 	if(!validateArgc(argc))
 	{
 		showHelp();
 		return 1;
 	}
 
+  current = newSession();
+
 	//This is currently the only option until TODO file input is implemented
-	interpreterMode = USE_PROMPT;
+	//current.mode = INTERACTIVE;
 
-	flagActions = handleFlags(argc,argv);
+	handleArgs(argc,argv);
+
+  printf("REFC: %d\n",current.refc);
+  if(current.refc > 0)
+  {
+    loadRefs(&current);
+  }
+
 	
-	if(interpreterMode == USE_PROMPT)
+	if(current.mode == INTERACTIVE)
 	{
-		Program prog = newProgram();
-    prompt(&prog);
+		*current.active = newProgram(constToString("LIVE"));
+    prompt(current.active);
     MAIN_DB ? printf("MADE IT BACK TO MAIN ALIVE\n") : 0;
-		/*
-		String test1 = promptForString(20);
-		String test2 = promptForString(21);
-		String *newLine = (String*)malloc(sizeof(String)*2);
-		newLine[0] = test1;
-		newLine[1] = test2;
-		*/
 
-    /*
-    //create test StringStrings
-		StringString line1 = newStringString(5);
-		StringString line2 = newStringString(5);
-		printf("line1 length: %d\n",line1.length);
-		printf("line2 length: %d\n",line2.length);
-    */
-
-    /*
-		for(int i = 0; i < line1.length; i++)
-		{
-			//printf("AT i=%d\n",i);
-			//printf("SS.strings[%d] length: %d\n",i,line.strings[i].length);
-			printf("%s",line1.strings[i]);
-		
-			for(int j = 0; j < line.strings[i].length; j++)
-
-			{
-				//printf("AT j=%d\n",j);
-				printf("%c",line.strings[i].chars[j]);
-			}
-			printf(",");
-		}
-    */
-
-    /*
-    //try to append test StringStrings to prog file
-		printf("\n");
-    //printSS(line1);
-    //printSS(line2);
-		appendLine(&prog,line1);
-		appendLine(&prog,line2);
-		//printf("%d\n",prog.lenLineSymbols[0][1]);
-		printProg(prog);
-    */
-    
-    /* realloc() driver
-    int i;
-    int *t = (int*)malloc(sizeof(int)*3);
-    for(i = 0; i < 3; i++) { t[i] = i; }
-
-    printf("before realloc(): size=%ld & ",sizeof(t));
-    for(i = 0; i < 3; i++)
-    {
-      printf("[%d] ",t[i]);
-    }
-    printf("\n");
-
-    t = (int*)safeRealloc(t, sizeof(int) * 4);
-    t[3] = 3;
-
-    printf("after realloc(): size=%ld & ",sizeof(t));
-    for(i = 0; i < 4; i++)
-    {
-      printf("[%d] ",t[i]);
-    }
-    printf("\n");
-    */
-
-    MAIN_DB ? printf("about to call printProg(prog)\n") : 0;
-    printProgram(prog); 
-    MAIN_DB ? printf("returned from printProgram(), now calling killProgram(&prog)\n") : 0;
-    killProgram(&prog);
-    MAIN_DB ? printf("returned from killProgram. %p should be null.\n", prog.lines) : 0; 
+    printProgram(*current.active); 
 	}
+
+  printf("haven't crashed\n");
+  endSession(&current);
 
 	MAIN_DB ? printf("returning 0 after this message.\n") : 0;	
 	return 0;
@@ -124,9 +62,12 @@ bool validateArgc(int argc)
 	switch(argc)
 	{
 		case 1:
-			break;
 		case 2:
-			break;
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+      break;
 		default:
 			throwException(TOO_MANY_ARGS); //TODO, evaluate as Exception Struct type, for now will print error
 			isValid = false;
@@ -141,9 +82,18 @@ void showHelp(void)
 	printf("Interpreter usage:\nidk lmao\n");
 }
 
-void * handleFlags(int argc, char* argv[])
+void handleArgs(int argc, char* argv[])
 {
   int i;
+  FILE **argrefv;
+  int argrefc;
+  bool userWantsPrompt;
+
+  userWantsPrompt = false;
+
+  argrefv = (FILE**)malloc(sizeof(FILE*)*argc);
+  argrefc = 0;
+
   for(i = 1; i < argc; i++)
 	{
     if(*argv[i] == '-')
@@ -151,14 +101,46 @@ void * handleFlags(int argc, char* argv[])
       if(strcmp(argv[1],"-h") == 0 || strcmp(argv[1],"--help") == 0)
       {
         showHelp();
+        free(argrefv);
         exit(0);
+      }
+      else if(strcmp(argv[1],"-i") == 0 || strcmp(argv[1],"--interactive") == 0)
+      {
+        current.mode = INTERACTIVE;   
+        userWantsPrompt = true;
       }
       else
       {
         printf("Unknown flag \"%s\".\n",argv[1]);
       } 
     }
+    else
+    {
+      //if the arg is not preceeded by an '-' we attempt to open it as a file
+      argrefv[argrefc] = fopen(argv[i],"r");
+      if (argrefv[argrefc] == NULL)
+      {
+        throwExceptionWithString(FILE_NOT_FOUND,argv[i]);
+        //fprintf(stderr,"Could not find a file by the name of '%s'.\n",argv[i]);
+      }
+      else
+      {
+        //TODO check for that file already being opened, because it works for now, but perhaps it shouldn't 
+        //current.refv = (FILE**)safeRealloc(current.refv,sizeof(FILE*) * ++current.refc);
+        //current.refv[current.refc-1] = argrefv[argrefc]; 
+
+        newRef(&current,argrefv[argrefc],argv[i]);
+      }
+
+      //Unless the -i flag is specified, the prompt not be displayed if a file open attempt is made, regardless of its success
+      if(!userWantsPrompt)
+      {
+        current.mode = SCRIPT;
+      }
+      argrefc++;
+
+    }
 	}
 
-	return NULL;
+  free(argrefv);
 }
