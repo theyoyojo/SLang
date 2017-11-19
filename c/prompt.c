@@ -29,7 +29,7 @@ void systemGenericPrompt(Program *prog)
     printf(PROMPT);
     buffLength = getRawLine(stdin,&buff,DEFAULT_BUFFER_SIZE);
     
-    //create a new string struct the size of the input buffer (though the allocated memory [raw.capacity] is secrretly ~1.3x this amount)
+    //create a new string struct the size of the input buffer (though the allocated memory [raw.capacity] is secretly ~1.3x this amount)
     raw = newString(buffLength);
     PROMPT_DB ? printf("buffLength=%d, begins @%p\n",buffLength,buff) : 0;
 
@@ -64,7 +64,10 @@ void systemGenericPrompt(Program *prog)
     //parse the raw string, separate it and validate it, return a StringString and append it to the program
     parsed = parseRawLine(raw);
     PROMPT_DB ? printSS(parsed) : 0;
+    PROMPT_DB ? printf("about to append parsed line @%p\n",&parsed) : 0;
     appendLine(prog,&parsed);
+    PROMPT_DB ? printf("DONE appending line\n") : 0;
+    
 
 
     //now get rid of the raw string, it is no longer needed
