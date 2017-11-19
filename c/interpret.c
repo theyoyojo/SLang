@@ -5,7 +5,7 @@
 #include "prompt.h"
 #include "interpret.h"
 
-#define MAIN_DB true
+#define MAIN_DB false
 #define HANDLEARGS_DB false
 
 bool validateArgc(int argc);
@@ -26,28 +26,34 @@ int main(int argc, char* argv[])
 
   current = newSession();
 
-	//This is currently the only option until TODO file input is implemented
-	//current.mode = INTERACTIVE;
-
 	handleArgs(argc,argv);
+  
 
-  printf("REFC: %d\n",current.refc);
+  MAIN_DB ? printf("REFC: %d\n",current.refc) : 0;
   if(current.refc > 0)
   {
     loadRefs(&current);
   }
 
+  MAIN_DB ? printf("[!]after files are handled, this is current.active.lines: %p\n",current.active->lines) : 0;
 	
 	if(current.mode == INTERACTIVE)
 	{
-		*current.active = newProgram(constToString("LIVE"));
-    prompt(current.active);
+    //printf("current.active is @ %p, current.filev is @ %p\n",current.active,current.filev);
+    prompt(&current.filev[0]);
     MAIN_DB ? printf("MADE IT BACK TO MAIN ALIVE\n") : 0;
 
-    printProgram(*current.active); 
 	}
 
-  printf("haven't crashed\n");
+  MAIN_DB ? printf("filec=%d\n",current.filec) :0;
+  for(int i = 0; i < current.filec; i++)
+  {
+    printf("===[PROGRAM '%s']===:\n",current.filev[i].name.chars);
+    printProgram(current.filev[i]);
+  }
+        
+
+  MAIN_DB ? printf("haven't crashed\n") : 0;
   endSession(&current);
 
 	MAIN_DB ? printf("returning 0 after this message.\n") : 0;	

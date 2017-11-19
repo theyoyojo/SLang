@@ -45,21 +45,25 @@ void killProgram(Program *prog)
 void addLine(Program *prog)
 {
   prog->length++;
-  ADDLINE_DB ? printf("adding line: new length of prog is:%d\n",prog->length) : 0;
+  ADDLINE_DB ? printf("adding line to prog->lines @ %p: new length of prog is:%d\n",prog->lines, prog->length) : 0;
 
+  /*
   if(prog->lines == NULL)
   {
     prog->lines = (StringString*)malloc(sizeof(StringString) * prog->length);
   }
   else
   {
-    prog->lines = (StringString*)safeRealloc(prog->lines,sizeof(StringString) * prog->length);
-  }
+  */
+  prog->lines = (StringString*)safeRealloc(prog->lines,sizeof(StringString) * prog->length);
+  //}
+  ADDLINE_DB ? printf("successfully added line\n") : 0;
 }
 
 void appendLine(Program *prog, StringString *line)
 {
   addLine(prog);
+  APPENDLINE_DB ? printf("added line to prog\n") : 0;
 
   prog->lines[prog->length-1] = *line;
   

@@ -165,6 +165,7 @@ void * safeRealloc(void *ptr, unsigned long int newSize)
 	void *test;
 
   SAFEREALLOC_DB ? printf("Starting safeRealloc()\n") : 0;
+  SAFEREALLOC_DB ? printf("about to realloc space starting @ %p and make it's size %ld\n",ptr,newSize) : 0;
 
 	test = realloc(ptr,newSize);
   SAFEREALLOC_DB ? printf("made testPointer\n") : 0;

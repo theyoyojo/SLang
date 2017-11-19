@@ -1,6 +1,13 @@
 #include "interpret.h"
-#define NEWREF_DB false
+#include "parse.h"
+
+#define LIVE_NAME "LIVE"
+#define DEFAULT_BUFFER_SIZE 1000
+
+#define NEWREF_DB false 
 #define KILLSESSION_DB false
+#define LOADREF_DB false
+#define ADDPROGRAM_DB false
 
 Session newSession(void)
 {
@@ -14,7 +21,9 @@ Session newSession(void)
   new.chr = 0;
 
   new.filev = (Program*)malloc(sizeof(Program));
+  new.filev[0] = newProgram(constToString(LIVE_NAME));
   new.filec = 1;
+
 
   new.active = &new.filev[0]; 
 
@@ -29,9 +38,13 @@ void killSession(Session *toKill)
 {
   int i;
 
+  KILLSESSION_DB ? printf("about to loop from 0 to %d (filec)\n",toKill->filec) : 0;
   for(i = 0; i < toKill->filec; i++)
   {
+    KILLSESSION_DB ? printf("inremented i to %d\n",i) : 0;
+    KILLSESSION_DB ? printf("about to kill program '%s' in filev[%d]\n",toKill->filev[i].name.chars,i) : 0;
     killProgram(&toKill->filev[i]);
+    KILLSESSION_DB ? printf("kill success\n") : 0;
   }
   toKill->active = NULL;
   free(toKill->filev); toKill->filev = NULL;
@@ -57,22 +70,43 @@ void endSession(Session *toEnd)
 void loadRef(Session *s, int refn)
 {
   char c;
-  printf("LOAD REF #%d. FILENAME: %s\n",refn, s->refnames[refn].chars);
+  int buffLength,i;
+  char* buff;
+  String raw;
+  StringString parsed;
+  LOADREF_DB ? printf("LOAD REF #%d. FILENAME: %s\n",refn, s->refnames[refn].chars) : 0;
   addProgram(s,s->refnames[refn]);
+
+  LOADREF_DB ? printf("[IF you must know] s->active->lines points to %p\n",s->active->lines) : 0;
 
   while((c = fgetc(s->refv[refn])) != EOF)
   {
-    //read
+    LOADREF_DB ? printf("[@c=%c IF you must know] s->active->lines points to %p\n",c,s->active->lines) : 0;
+    ungetc(c,s->refv[refn]);
+    buffLength = getRawLine(s->refv[refn],&buff,DEFAULT_BUFFER_SIZE);
+    raw = newString(buffLength); 
+    for(i = 0; i < buffLength; i++)
+    {
+      raw.chars[i] = buff[i];
+    }
+    free(buff); buff = NULL;
+    parsed = parseRawLine(raw);
+    
+    //must be refn+1 beacause filev[0] is the live program buffer
+    appendLine(&s->filev[refn+1],&parsed);
+    killString(&raw);
+    
   }
   if(feof(s->refv[refn]))
   {
     //great success
+    LOADREF_DB ? printf("[@EOF IF you must know again] s->active->lines points to %p\n",s->active->lines) : 0;
   }
   else
   {
     throwExceptionWithString(BAD_FILE_READ,s->refnames[refn].chars);
   }
-  printf("successful refload #%d\n",refn);
+  LOADREF_DB ? printf("successful refload #%d\n",refn) : 0;
 }
 
 void loadRefs(Session *s)
@@ -108,8 +142,9 @@ void newRef(Session *s,FILE *ref, const char* name)
 void addProgram(Session *s,String name)
 {
   s->filec++;
+  ADDPROGRAM_DB ? printf("incrememnted filec to %d\n",s->filec) : 0;
 
-  printf("adding program called '%s' to file in filev[%d]\n",name.chars,s->filec-1);
+  ADDPROGRAM_DB ? printf("realloc %ld bytes for for Program* filev, adding '%s' to filev[%d]\n",sizeof(Program)*s->filec,name.chars,s->filec-1) : 0;
   s->filev = (Program*)safeRealloc(s->filev,sizeof(Program)*s->filec);
   s->filev[s->filec-1] = newProgram(name);
 }
