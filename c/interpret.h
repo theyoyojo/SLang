@@ -59,6 +59,4 @@ void newRef(Session *s,FILE *ref, const char* name);
 
 void addProgram(Session *s, String name);
 
-void showHelp(void);
-
 #endif

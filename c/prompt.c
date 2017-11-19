@@ -9,8 +9,12 @@
 #define PROMPT "SLang>>"
 #define PROMPT_DB false
 
-//TODO allow user to adjust buffer with args
-#define DEFAULT_BUFFER_SIZE 1000
+void showPromptHelp(void)
+{
+  printf("Current built in commands:\n");
+  printf("help! : show this message\n");
+  printf("exit! : quit the program\n");
+}
 
 void systemGenericPrompt(Program *prog)
 {
@@ -69,7 +73,7 @@ void systemGenericPrompt(Program *prog)
     }
     else if(strcmp(raw.chars,"help!\n") == 0)
     {
-      showHelp();
+      showPromptHelp();
     }
     else
     {

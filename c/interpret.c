@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     //printf("current.active is @ %p, current.filev is @ %p\n",current.active,current.filev);
     prompt(&current.filev[0]); //I wanted to use current.active, but loadRefs changes the pointer. Why?
 
-    printf("%d\n",isspace('\n'));
+    //printf("%d\n",isspace('\n'));
 
     if(getUserBool("Would you like to save the live buffer?"))
     {
@@ -99,7 +99,11 @@ bool validateArgc(int argc)
 
 void showHelp(void)
 {
-	printf("Interpreter usage:\nidk lmao\n");
+	printf("Interpreter argument usage:\n");
+  printf("-h || --help : Show this message\n");
+  printf("-i || --interactive : force enable interractive prompt\n");
+  printf("<filename> : attempt to load a file with name \"filename\"\n");
+  printf("NOTE: Loading a file will disable shell unless otherwise specified\n");
 }
 
 void handleArgs(int argc, char* argv[])
