@@ -2,6 +2,7 @@
 #define PROGRAM_H "program.h"
 #include "error.h"
 #include "utility.h"
+#include <stdio.h>
 
 /*
 typedef struct Program{
@@ -30,6 +31,8 @@ void addLine(Program *prog);
 
 void appendLine(Program *prog, StringString *newLine);
 
-void printProgram(Program prog);
+void printProgram(FILE *out, Program prog);
+
+void saveProgram(Program prog);
 
 #endif

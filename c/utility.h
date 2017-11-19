@@ -25,7 +25,7 @@ typedef struct StringString {
 
 String newString(int size);
 
-void printString(String string);
+void printString(FILE *out, String string);
 
 String constToString(const char* literal);
 
@@ -35,9 +35,9 @@ StringString newStringString(int nStrings, String *strings);
 
 void killSS(StringString *toKill);
 
-String promptForString(int max);
+String promptForString(int max,const char* prompt);
 
-void printSS(StringString ss);
+void printSS(FILE *out, StringString ss);
 
 StringString stringCharsToStringString(String str);
 
@@ -45,5 +45,10 @@ void * safeRealloc(void *ptr, unsigned long int newSize);
 
 int getRawLine(FILE *in, char** buff, int buffSize);
 
+bool getUserBool(const char* prompt);
+
+bool isReadableFile(const char* filename);
+
+bool isWritableFile(const char* filename);
 
 #endif

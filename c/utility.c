@@ -1,12 +1,16 @@
 #include "utility.h"
+#include "interpret.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <ctype.h>
 
 #define SAFEREALLOC_DB false
-#define PROMPTFORSTRING_DB false
+#define PROMPTFORSTRING_DB true
 #define GETRAWLINE_DB false
 #define PRINTSS_DB false
+
 
 String newString(int size)
 {
@@ -27,9 +31,9 @@ void killString(String *toKill)
   toKill->length = 0;
 }
 
-void printString(String string)
+void printString(FILE *out, String string)
 {
-  printf("%s\n",string.chars);
+  fprintf(out, "%s\n",string.chars);
 }
 
 StringString newStringString(int nStrings, String *strings)
@@ -80,7 +84,7 @@ void killSS(StringString *murderMe)
  
 }
 
-String promptForString(int max)
+String promptForString(int max,const char* prompt)
 {
 	int i;
 	char charin;
@@ -91,35 +95,39 @@ String promptForString(int max)
 	buff = (char*)malloc(sizeof(char)*max);
 	buffLength = 0;
 
-	printf("Enter a string, max size is %d >>",max);
+	printf("%s [%d char limit] >>",prompt,  max);
+  scanf(" %c",&charin);
 	for(i = 0; i < max; i++)
 	{
-		scanf("%c",&charin);
 		buff[i] = charin;
 		buffLength++;
     PROMPTFORSTRING_DB ? printf("next: %c @i=%d\n",charin,i) : 0;
-		if (charin == '\n')
+		if (isspace(charin) || charin == '\n')
 		{
       PROMPTFORSTRING_DB ? printf("found an '\\n'\n") : 0;
 			ungetc(charin, stdin);
-			//buff[buffLength++] = '\0';
+			buff[i] = '\0';
 			break;
 			
 		}
+		scanf("%c",&charin);
 
-	}
 	buff[buffLength++] = '\0';
+	}
 
 	//clear keyboard buffer
 	while(scanf("%c",&charin) == 1 && charin != '\n');
 
+  printf("new string being made of size=%d\n",buffLength);
 	new = newString(buffLength);
 	new.length = buffLength;
 
+  /*
 	for(i = 0; i < max; i++)
 	{
 		new.chars[i] = '*';
 	}
+  */
 
 
 	for(i = 0; i < buffLength; i++)
@@ -130,13 +138,20 @@ String promptForString(int max)
 	return new;
 }
 
-void printSS(StringString ss)
+void printSS(FILE *out,StringString ss)
 {
   int i; 
 
   for(i = 0; i < ss.length; i++)
   {
-    printf("%c%s%c%c",PRINTSS_DB? '[' : 0,ss.strings[i].chars,PRINTSS_DB? ']' : 0,PRINTSS_DB ? (i < ss.length-1 ? ',' : '\n') : 0);
+    if(PRINTSS_DB)
+    {
+    fprintf(out,"%c%s%c%c",PRINTSS_DB? '[' : 0,ss.strings[i].chars,PRINTSS_DB? ']' : 0,PRINTSS_DB ? (i < ss.length-1 ? ',' : '\n') : 0);
+    }
+    else
+    {
+      fprintf(out,"%s",ss.strings[i].chars);
+    }
   }
 }
 
@@ -209,4 +224,57 @@ int getRawLine(FILE *in, char** buff, int buffSize)
   */
   return buffLength;
   
+}
+bool getUserBool(const char* prompt)
+{
+  char c,clear;
+
+  printf("%s [y/n]>",prompt);
+  while(scanf("%c", &c) != 1 || !(c == 'y' || c == 'Y' || c == 'n' || c == 'N'))
+  {
+    ungetc(c,stdin);
+    while(scanf("%c",&clear) == 1 && clear != '\n');
+    printf("That is an invalid choice.\n%s [y/n]>",prompt);
+  }
+  while(scanf("%c",&clear) == 1 && clear != '\n');
+
+  switch(c)
+  {
+    case 'y':
+    case 'Y':
+      return true;
+      break;
+    case 'n':
+    case 'N':
+      return false;
+      break;
+    default:
+      fprintf(stderr, "Implementation error in getUserBool().\n");
+      break;
+  }
+
+}
+
+bool isReadableFile(const char* filename)
+{
+  if(access(filename,R_OK) == 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+bool isWritableFile(const char* filename)
+{
+  if(access(filename,W_OK) == 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }

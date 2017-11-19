@@ -134,7 +134,7 @@ void newRef(Session *s,FILE *ref, const char* name)
   
   s->refnames = (String*)safeRealloc(s->refnames,sizeof(String) * s->refc);
   NEWREF_DB ? printf("about to assign file name '%s' to String ",name) : 0;
-  NEWREF_DB ? printString(constToString(name)) : 0;
+  NEWREF_DB ? printString(stdout, constToString(name)) : 0;
 
   s->refnames[s->refc-1] = constToString(name);
 }

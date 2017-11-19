@@ -4,6 +4,7 @@
 #include "program.h"
 #include "prompt.h"
 #include "interpret.h"
+#include <ctype.h>
 
 #define MAIN_DB false
 #define HANDLEARGS_DB false
@@ -18,6 +19,8 @@ Session current;
 
 int main(int argc, char* argv[])
 {
+  bool willSaveBuffer;
+
 	if(!validateArgc(argc))
 	{
 		showHelp();
@@ -28,6 +31,7 @@ int main(int argc, char* argv[])
 
 	handleArgs(argc,argv);
   
+  //printString(stdout,promptForString(100,"entersometing"));
 
   MAIN_DB ? printf("REFC: %d\n",current.refc) : 0;
   if(current.refc > 0)
@@ -40,16 +44,26 @@ int main(int argc, char* argv[])
 	if(current.mode == INTERACTIVE)
 	{
     //printf("current.active is @ %p, current.filev is @ %p\n",current.active,current.filev);
-    prompt(&current.filev[0]);
+    prompt(&current.filev[0]); //I wanted to use current.active, but loadRefs changes the pointer. Why?
+
+    printf("%d\n",isspace('\n'));
+
+    if(getUserBool("Would you like to save the live buffer?"))
+    {
+      saveProgram(current.filev[0]);
+    }
+          
     MAIN_DB ? printf("MADE IT BACK TO MAIN ALIVE\n") : 0;
 
 	}
 
   MAIN_DB ? printf("filec=%d\n",current.filec) :0;
+  
+  //this is temporary for testing purposes
   for(int i = 0; i < current.filec; i++)
   {
     printf("===[PROGRAM '%s']===:\n",current.filev[i].name.chars);
-    printProgram(current.filev[i]);
+    printProgram(stdout, current.filev[i]);
   }
         
 

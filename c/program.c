@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include "program.h"
 #include "utility.h"
+#include "interpret.h"
+#include "unistd.h"
+#include "error.h"
 
 #define APPENDLINE_DB false
 #define ADDLINE_DB false
-#define PRINTPROG_DB false
+#define PRINTPROG_DB true
 #define KILL_DB false
 
 
@@ -70,24 +73,66 @@ void appendLine(Program *prog, StringString *line)
   if(APPENDLINE_DB)
   {
     printf("appending line from %p. line follows:\n",line);
-    printSS(*line);
+    printSS(stdout, *line);
     printf("END OF LINE\n");
   }
 
   //killSS(&line);
 }
 
-void printProgram(Program prog)
+void printProgram(FILE *out,Program prog)
 {
   int i;
 
-  PRINTPROG_DB ? printf("printing program of length %d.\n",prog.length) : 0;
+  PRINTPROG_DB ? fprintf(stdout,"printing program of length %d.\n",prog.length) : 0;
   for(i = 0; i < prog.length; i++)
   {
-    printSS(prog.lines[i]);
+    printSS(out,prog.lines[i]);
   }
 }
 
+void saveProgram(Program prog)
+{
+  FILE *new;
+  String name;
+
+  name = promptForString(DEFAULT_BUFFER_SIZE,"Enter a name for this file ");
+  printString(stdout,name);
+  
+  if(access(name.chars,F_OK) == -1)
+  {
+    new = fopen(name.chars,"w");
+  }
+  else 
+  {
+    if(getUserBool("A file by that name already exists, overwrite?"))
+    {
+      if(!isWritableFile(name.chars))
+      {
+        throwExceptionWithString(FILE_WRITE_ACCESS_DENIED,name.chars);
+      }
+      else
+      {
+        new = fopen(name.chars, "w");
+      }
+    }
+    else if(getUserBool("Would you like to try another name? If you choose no, the buffer will be lost."))
+    {
+      saveProgram(prog);
+      return;
+    }
+    else
+    {
+      return;
+    }
+  }
+
+
+  printProgram(new,prog); 
+  fclose(new);
+  
+
+}
 
 /* the old way of doing thngs is below. This involves dynamically allocating and reallocating a char*** for some reason,
  * getting rid of StringStrings, and keeping track of lengths seperately. As you can expect, it caused many an unforseen segfault.
