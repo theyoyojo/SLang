@@ -10,6 +10,10 @@
 #define INTERACTIVE 0
 #define SCRIPT 1
 
+//TODO allow user to adjust buffer with args
+#define DEFAULT_BUFFER_SIZE 1000
+
+
 typedef struct Session
 {
   //interpret vs script

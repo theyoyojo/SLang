@@ -1,14 +1,20 @@
 #include "prompt.h"
 #include "utility.h"
 #include "program.h"
+#include "interpret.h"
 #include "parse.h"
 #include <stdlib.h>
+#include <string.h>
 
 #define PROMPT "SLang>>"
 #define PROMPT_DB false
 
-//TODO allow user to adjust buffer with args
-#define DEFAULT_BUFFER_SIZE 1000
+void showPromptHelp(void)
+{
+  printf("Current built in commands:\n");
+  printf("help! : show this message\n");
+  printf("exit! : quit the program\n");
+}
 
 void systemGenericPrompt(Program *prog)
 {
@@ -19,8 +25,8 @@ void systemGenericPrompt(Program *prog)
   int buffLength, i;
 
   //TEMPORARY
-  int exitCondition;
-  exitCondition = true;
+  bool exitCondition;
+  exitCondition = false;
     
   
   do
@@ -58,17 +64,28 @@ void systemGenericPrompt(Program *prog)
     clear = raw.chars[0];
     PROMPT_DB ? printf("first char: '%c'\n",clear) : 0;
 
-    PROMPT_DB ? printf("%s",raw.chars) : 0;
+    PROMPT_DB ? printf("'%s'",raw.chars) : 0;
 
+    //basic exit functionality, this possibly should be changed later for scalability
+    if(strcmp(raw.chars,"exit!\n") == 0)
+    {
+      exitCondition = true;
+    }
+    else if(strcmp(raw.chars,"help!\n") == 0)
+    {
+      showPromptHelp();
+    }
+    else
+    {
 
-    //parse the raw string, separate it and validate it, return a StringString and append it to the program
-    parsed = parseRawLine(raw);
-    PROMPT_DB ? printSS(parsed) : 0;
-    PROMPT_DB ? printf("about to append parsed line @%p\n",&parsed) : 0;
-    appendLine(prog,&parsed);
-    PROMPT_DB ? printf("DONE appending line\n") : 0;
-    
-
+      //parse the raw string, separate it and validate it, return a StringString and append it to the program
+      parsed = parseRawLine(raw);
+      PROMPT_DB ? printSS(stdout,parsed) : 0;
+      PROMPT_DB ? printf("about to append parsed line @%p\n",&parsed) : 0;
+      appendLine(prog,&parsed);
+      PROMPT_DB ? printf("DONE appending line\n") : 0;
+      
+    }
 
     //now get rid of the raw string, it is no longer needed
     PROMPT_DB ? printf("about to free string raw of length %d, chars located @ %p & String @ %p.\n",raw.length,raw.chars,&raw) : 0;
@@ -77,7 +94,7 @@ void systemGenericPrompt(Program *prog)
 
     
 
-  } while (clear != '\n');
+  } while (!exitCondition);
   
 	
 }
