@@ -17,6 +17,12 @@ void throwException(int error)
     case BAD_FILE_READ:
       fprintf(stderr,"[ERROR] Something went wrong while reading an unspecified file.\n");
       break;
+    case FILE_READ_ACCESS_DENIED:
+      fprintf(stderr,"[ERROR] Read access denied for unspecified file.\n");
+      break;
+    case FILE_WRITE_ACCESS_DENIED:
+      fprintf(stderr,"[ERROR] Write access denied for unspecified file.\n");
+      break;
 		default:
 			fprintf(stderr,"[ERROR] An unknown error occured.\n");
 			break;
@@ -40,6 +46,12 @@ void throwExceptionWithString(int error, const char* string)
       break;
     case BAD_FILE_READ:
       fprintf(stderr,"[ERROR] Something went wrong while reading from file '%s'.\n",string);
+      break;
+    case FILE_READ_ACCESS_DENIED:
+      fprintf(stderr,"[ERROR] Read access denied for file '%s'.\n",string);
+      break;
+    case FILE_WRITE_ACCESS_DENIED:
+      fprintf(stderr,"[ERROR] Write access denied for file '%s'.\n",string);
       break;
 		default:
 			fprintf(stderr,"[ERROR] An unknown error occured.\n");
