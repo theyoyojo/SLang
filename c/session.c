@@ -76,6 +76,7 @@ void loadRef(Session *s, int refn)
   StringString parsed;
   LOADREF_DB ? printf("LOAD REF #%d. FILENAME: %s\n",refn, s->refnames[refn].chars) : 0;
   addProgram(s,s->refnames[refn]);
+  s->active = &s->filev[0];
 
   LOADREF_DB ? printf("[IF you must know] s->active->lines points to %p\n",s->active->lines) : 0;
 
