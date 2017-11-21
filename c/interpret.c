@@ -31,7 +31,6 @@ int main(int argc, char* argv[])
 
 	handleArgs(argc,argv);
   
-  //printString(stdout,promptForString(100,"entersometing"));
 
   MAIN_DB ? printf("REFC: %d\n",current.refc) : 0;
   if(current.refc > 0)
@@ -43,14 +42,11 @@ int main(int argc, char* argv[])
 	
 	if(current.mode == INTERACTIVE)
 	{
-    //printf("current.active is @ %p, current.filev is @ %p\n",current.active,current.filev);
-    prompt(current.active); //I wanted to use current.active, but loadRefs changes the pointer. Why?
-
-    //printf("%d\n",isspace('\n'));
+    prompt(current.active); 
 
     if(getUserBool("Would you like to save the live buffer?"))
     {
-      saveProgram(current.filev[0]);
+      saveProgram(*current.active);
     }
           
     MAIN_DB ? printf("MADE IT BACK TO MAIN ALIVE\n") : 0;
