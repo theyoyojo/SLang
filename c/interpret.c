@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 	if(current.mode == INTERACTIVE)
 	{
     //printf("current.active is @ %p, current.filev is @ %p\n",current.active,current.filev);
-    prompt(&current.filev[0]); //I wanted to use current.active, but loadRefs changes the pointer. Why?
+    prompt(current.active); //I wanted to use current.active, but loadRefs changes the pointer. Why?
 
     //printf("%d\n",isspace('\n'));
 

@@ -81,7 +81,6 @@ void killSS(StringString *murderMe)
     free(murderMe->strings); murderMe->strings = NULL;
   }
   murderMe->length = 0;
- 
 }
 
 String promptForString(int max,const char* prompt)

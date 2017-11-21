@@ -8,7 +8,7 @@
 
 #define APPENDLINE_DB false
 #define ADDLINE_DB false
-#define PRINTPROG_DB true
+#define PRINTPROG_DB false
 #define KILL_DB false
 
 
