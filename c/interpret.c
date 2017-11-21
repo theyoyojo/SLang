@@ -4,6 +4,7 @@
 #include "program.h"
 #include "prompt.h"
 #include "interpret.h"
+#include "os.h"
 #include <ctype.h>
 
 #define MAIN_DB false
@@ -26,6 +27,8 @@ int main(int argc, char* argv[])
 		showHelp();
 		return 1;
 	}
+
+  printf("You are using a %s machine.\n",OS);
 
   current = newSession();
 
