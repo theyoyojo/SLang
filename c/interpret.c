@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-  printf("You are using a %s machine.\n",OS_NAME);
+  MAIN_DB ? printf("You are using a %s machine.\n",OS_NAME) : 0;
 
   current = newSession();
 
