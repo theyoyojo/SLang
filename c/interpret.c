@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-  printf("You are using a %s machine.\n",OS);
+  printf("You are using a %s machine.\n",OS_NAME);
 
   current = newSession();
 
@@ -139,9 +139,14 @@ void handleArgs(int argc, char* argv[])
     }
     else
     {
-      //if the arg is not preceeded by an '-' we attempt to open it as a file
       argrefv[argrefc] = fopen(argv[i],"r");
-      if (argrefv[argrefc] == NULL)
+      //throw permissions error if file exists but read permissions are denied
+      if(fileExists(argv[i]) && !isReadableFile(argv[i]))
+      {
+        throwExceptionWithString(FILE_READ_ACCESS_DENIED,argv[i]);
+      }
+      //if the arg is not preceeded by an '-' we attempt to open it as a file
+      else if (argrefv[argrefc] == NULL)
       {
         throwExceptionWithString(FILE_NOT_FOUND,argv[i]);
         //fprintf(stderr,"Could not find a file by the name of '%s'.\n",argv[i]);
@@ -149,8 +154,6 @@ void handleArgs(int argc, char* argv[])
       else
       {
         //TODO check for that file already being opened, because it works for now, but perhaps it shouldn't 
-        //current.refv = (FILE**)safeRealloc(current.refv,sizeof(FILE*) * ++current.refc);
-        //current.refv[current.refc-1] = argrefv[argrefc]; 
 
         newRef(&current,argrefv[argrefc],argv[i]);
       }

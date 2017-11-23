@@ -1,10 +1,17 @@
+#define OS_LINUX 1
+#define OS_WINDOWS 2
+
 #ifdef linux
 
 #include <unistd.h>
 #include <termios.h>
 
 #ifndef OS
-#define OS "linux"
+#define OS OS_LINUX
+#endif
+
+#ifndef OS_NAME
+#define OS_NAME "linux"
 #endif
 
 #endif
@@ -15,7 +22,11 @@
 #include <tchar.h>
 
 #ifndef OS
-#define OS "windows"
+#define OS OS_WINDOWS
+#endif
+
+#ifndef OS_NAME
+#define OS_NAME "windows"
 #endif
 
 

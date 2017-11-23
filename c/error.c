@@ -23,6 +23,9 @@ void throwException(int error)
     case FILE_WRITE_ACCESS_DENIED:
       fprintf(stderr,"[ERROR] Write access denied for unspecified file.\n");
       break;
+    case OS_NOT_IMPLEMENTED:
+      fprintf(stderr,"[ERROR] A function has OS specific implementation that is undefined for your system. Will skip.\n");
+      break;
 		default:
 			fprintf(stderr,"[ERROR] An unknown error occured.\n");
 			break;
@@ -52,6 +55,9 @@ void throwExceptionWithString(int error, const char* string)
       break;
     case FILE_WRITE_ACCESS_DENIED:
       fprintf(stderr,"[ERROR] Write access denied for file '%s'.\n",string);
+      break;
+    case OS_NOT_IMPLEMENTED:
+      fprintf(stderr,"[ERROR] Function '%s' has OS specific implementation that is undefined for your system. Will skip.\n",string);
       break;
 		default:
 			fprintf(stderr,"[ERROR] An unknown error occured.\n");

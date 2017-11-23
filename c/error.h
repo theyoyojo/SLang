@@ -7,6 +7,7 @@
 #define BAD_FILE_READ 3
 #define FILE_READ_ACCESS_DENIED 4
 #define FILE_WRITE_ACCESS_DENIED 5
+#define OS_NOT_IMPLEMENTED 6
 
 void throwException(int error);
 

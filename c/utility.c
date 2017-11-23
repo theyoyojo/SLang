@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+#include "os.h"
 
 #define SAFEREALLOC_DB false
 #define PROMPTFORSTRING_DB true
@@ -256,6 +257,7 @@ bool getUserBool(const char* prompt)
 
 bool isReadableFile(const char* filename)
 {
+#if OS == OS_LINUX
   if(access(filename,R_OK) == 0)
   {
     return true;
@@ -264,10 +266,15 @@ bool isReadableFile(const char* filename)
   {
     return false;
   }
+#else
+  throwExceptionWithString(OS_NOT_IMPLEMENTED,"isReadableFile()");
+  return true;
+#endif
 }
 
 bool isWritableFile(const char* filename)
 {
+#if OS == OS_LINUX
   if(access(filename,W_OK) == 0)
   {
     return true;
@@ -276,4 +283,27 @@ bool isWritableFile(const char* filename)
   {
     return false;
   }
+#else
+  throwExceptionWithString(OS_NOT_IMPLEMENTED,"isWritableFile()");
+  return true;
+#endif
+}
+
+
+
+bool fileExists(const char* filename)
+{
+#if OS == OS_LINUX
+  if(access(filename,F_OK) == 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+#else
+  throwExceptionWithString(OS_NOT_IMPLEMENTED,"fileExists()");
+  return true;
+#endif
 }

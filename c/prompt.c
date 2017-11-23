@@ -5,6 +5,7 @@
 #include "parse.h"
 #include <stdlib.h>
 #include <string.h>
+#include "os.h"
 
 #define PROMPT "SLang>>"
 #define PROMPT_DB false

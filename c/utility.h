@@ -51,4 +51,6 @@ bool isReadableFile(const char* filename);
 
 bool isWritableFile(const char* filename);
 
+bool fileExists(const char* filename);
+
 #endif
