@@ -110,6 +110,11 @@ void saveProgram(Program prog)
       if(!isWritableFile(name.chars))
       {
         throwExceptionWithString(FILE_WRITE_ACCESS_DENIED,name.chars);
+        if(getUserBool("Would you like to try another name? If you choose no, the buffer will be lost."))
+        {
+          saveProgram(prog);
+          return;
+          }
       }
       else
       {

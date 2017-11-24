@@ -27,17 +27,40 @@ String newString(int size);
 
 void printString(FILE *out, String string);
 
+void appendString(String *s, const char* add);
+
+void insertString(String *s, const char* insert, int index);
+
 String constToString(const char* literal);
 
 void killString(String *toKill);
 
 StringString newStringString(int nStrings, String *strings);
 
+//macro to newStringString()
+StringString newSS(int nStrings, String *strings);
+
+void appendStringString(StringString *ss, String *s);
+
+//macro to appendStringString()
+void appendSS(StringString *ss, String *s);
+
+void insertStringString(StringString *ss, String *s, int index);
+
+//macro to insertStringString()
+void insertSS(StringString *ss, String *s, int index);
+
 void killSS(StringString *toKill);
+
+//macro to killSS()
+void killStringString(StringString *toKill);
 
 String promptForString(int max,const char* prompt);
 
 void printSS(FILE *out, StringString ss);
+
+//macro to printSS()
+void printStringString(FILE *out, StringString ss);
 
 StringString stringCharsToStringString(String str);
 

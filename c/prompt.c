@@ -61,11 +61,8 @@ void systemGenericPrompt(Program *prog)
       }
     }
 
-    //temorary exit condition based on first character not being a newline
-    clear = raw.chars[0];
-    PROMPT_DB ? printf("first char: '%c'\n",clear) : 0;
 
-    PROMPT_DB ? printf("'%s'",raw.chars) : 0;
+    true || PROMPT_DB ? printf("%s",raw.chars) : 0;
 
     //basic exit functionality, this possibly should be changed later for scalability
     if(strcmp(raw.chars,"exit!\n") == 0)
@@ -81,7 +78,7 @@ void systemGenericPrompt(Program *prog)
 
       //parse the raw string, separate it and validate it, return a StringString and append it to the program
       parsed = parseRawLine(raw);
-      PROMPT_DB ? printSS(stdout,parsed) : 0;
+      true || PROMPT_DB ? printSS(stdout,parsed) : 0;
       PROMPT_DB ? printf("about to append parsed line @%p\n",&parsed) : 0;
       appendLine(prog,&parsed);
       PROMPT_DB ? printf("DONE appending line\n") : 0;

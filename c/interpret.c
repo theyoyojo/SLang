@@ -30,6 +30,40 @@ int main(int argc, char* argv[])
 
   MAIN_DB ? printf("You are using a %s machine.\n",OS_NAME) : 0;
 
+  /* string append/insert driver section
+
+  String test = constToString("TEST");
+  StringString t = newStringString(0,NULL);
+
+  
+  String addition = constToString("BOB");
+  
+  String add2 = constToString("SAM");
+  String add3 = constToString("JOHN");
+  
+  appendSS(&t,&addition);
+  appendSS(&t,&add2);
+  appendSS(&t,&add3);
+  
+
+  String insert1 = constToString("LUKE");
+  insertSS(&t,&insert1,-100);
+  insertSS(&t,&addition,200000);
+  //insertSS(&t,&add2,100);
+
+  printSS(stdout,t);
+  printf("\nlength: %d\n",t.length);
+
+  //insertString(&test,"[cheese]",0);
+
+  //printString(stdout,test);
+  //printf("length: %d\n",test.length);
+  //
+  */
+  
+  printString(stdout,t);
+  
+
   current = newSession();
 
 	handleArgs(argc,argv);
